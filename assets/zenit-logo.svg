@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 310" role="img" aria-labelledby="title desc">
+  <title id="title">Zenit</title>
+  <desc id="desc">Logo de Zenit con arco ascendente, punto luminoso y nombre de la marca.</desc>
+  <defs>
+    <linearGradient id="zenitArc" x1="92" y1="165" x2="430" y2="70" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#163f66"/>
+      <stop offset="0.52" stop-color="#2caec7"/>
+      <stop offset="1" stop-color="#52d9dd"/>
+    </linearGradient>
+    <radialGradient id="zenitPoint" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#75f6ff"/>
+      <stop offset="0.45" stop-color="#1db8ff"/>
+      <stop offset="1" stop-color="#2367d6"/>
+    </radialGradient>
+    <filter id="zenitGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <path d="M80 178 C82 94 176 49 275 48 C365 47 441 93 444 176" fill="none" stroke="url(#zenitArc)" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="276" cy="48" r="25" fill="#24b8ff" opacity="0.28" filter="url(#zenitGlow)"/>
+  <circle cx="276" cy="48" r="15" fill="url(#zenitPoint)"/>
+  <text x="50%" y="276" text-anchor="middle" fill="#0d2f57" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="84" font-weight="700" letter-spacing="13">ZENIT</text>
+</svg>
