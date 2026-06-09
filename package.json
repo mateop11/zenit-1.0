@@ -1,0 +1,13 @@
+{
+  "name": "zenit-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Pagina web de Zenit con backend sencillo para consultas.",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node backend/server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

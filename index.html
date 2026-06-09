@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; navigate-to 'self' https://wa.me https://api.whatsapp.com; upgrade-insecure-requests"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; navigate-to 'self' https://wa.me https://api.whatsapp.com; upgrade-insecure-requests"
     >
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="description" content="Zenit desarrolla software a medida, automatizaciones, soluciones cloud y datos para empresas que quieren escalar con tecnologia confiable.">
@@ -134,19 +134,28 @@
         </div>
       </section>
 
-      <section class="intro-band" aria-label="Resumen de capacidades">
+      <section class="intro-band" aria-label="Forma de trabajo">
         <div class="container intro-grid">
           <article>
-            <span class="metric" data-count="4">0</span>
-            <p>frentes clave: web, procesos, datos y nube.</p>
+            <span class="intro-icon"><svg class="icon"><use href="#icon-system"></use></svg></span>
+            <div>
+              <h3>Soluciones a la medida</h3>
+              <p>Conectamos web, procesos, datos y nube segun el objetivo real del negocio.</p>
+            </div>
           </article>
           <article>
-            <span class="metric" data-count="30">0</span>
-            <p>dias para un primer producto funcional en proyectos acotados.</p>
+            <span class="intro-icon"><svg class="icon"><use href="#icon-spark"></use></svg></span>
+            <div>
+              <h3>Primer avance claro</h3>
+              <p>Priorizamos una version funcional para validar rapido antes de escalar.</p>
+            </div>
           </article>
           <article>
-            <span class="metric" data-count="100">0</span>
-            <p>por ciento enfocados en soluciones medibles y mantenibles.</p>
+            <span class="intro-icon"><svg class="icon"><use href="#icon-shield"></use></svg></span>
+            <div>
+              <h3>Codigo mantenible</h3>
+              <p>Aplicamos buenas practicas, documentacion y soporte para evolucionar con orden.</p>
+            </div>
           </article>
         </div>
       </section>
@@ -483,12 +492,16 @@
                 <input name="name" autocomplete="name" maxlength="80" required placeholder="Tu nombre">
               </label>
               <label>
-                Empresa
-                <input name="company" autocomplete="organization" maxlength="90" placeholder="Nombre de tu empresa">
+                Numero de WhatsApp
+                <input name="contact" type="tel" inputmode="numeric" autocomplete="tel" maxlength="15" pattern="[0-9]{7,15}" required placeholder="0980919560" title="Ingresa solo numeros, sin espacios ni guiones.">
               </label>
             </div>
 
             <div class="field-grid">
+              <label>
+                Empresa
+                <input name="company" autocomplete="organization" maxlength="90" placeholder="Nombre de tu empresa">
+              </label>
               <label>
                 Tipo de proyecto
                 <select name="project" required>
@@ -534,7 +547,7 @@
             </section>
 
             <div class="form-footer">
-              <p class="form-status" id="form-status" role="status" aria-live="polite">No almacenamos tu informacion en este sitio.</p>
+              <p class="form-status" id="form-status" role="status" aria-live="polite">Registramos tu consulta solo para responderte. Tambien se abrira WhatsApp.</p>
               <button class="button button-primary" type="submit">
                 <svg class="icon"><use href="#icon-message"></use></svg>
                 Enviar consulta por WhatsApp
@@ -642,7 +655,7 @@
 
       <div class="container footer-bottom">
         <p>&copy; 2026 Zenit. Desarrollo de software y soluciones tecnol&oacute;gicas.</p>
-        <p>Aviso de privacidad: este sitio no almacena tus datos; el formulario prepara un mensaje que se env&iacute;a por WhatsApp desde tu dispositivo.</p>
+        <p>Aviso de privacidad: usamos los datos del formulario solo para responder tu consulta y dar seguimiento al proyecto solicitado.</p>
       </div>
     </footer>
 

@@ -1,4 +1,5 @@
 const WHATSAPP_NUMBER = "593980919560";
+const CONTACT_API_ENDPOINT = "/api/contact";
 
 const routes = {
   ventas: {
@@ -118,6 +119,7 @@ const status = document.querySelector("#form-status");
 const projectSelect = getFormControl("project");
 const messageTextarea = getFormControl("message");
 const prioritySelect = getFormControl("priority");
+const contactInput = getFormControl("contact");
 const summaryProject = document.querySelector("[data-summary-project]");
 const summaryPriority = document.querySelector("[data-summary-priority]");
 const summaryMessage = document.querySelector("[data-summary-message]");
@@ -158,6 +160,56 @@ function shortMessagePreview(message) {
   }
 
   return cleanMessage.length > 150 ? `${cleanMessage.slice(0, 147)}...` : cleanMessage;
+}
+
+function buildContactPayload(data) {
+  return {
+    name: String(data.get("name") || "").trim(),
+    contact: String(data.get("contact") || "").replace(/\D/g, "").trim(),
+    company: String(data.get("company") || "").trim(),
+    project: String(data.get("project") || "").trim(),
+    priority: String(data.get("priority") || "").trim(),
+    message: String(data.get("message") || "").trim()
+  };
+}
+
+function buildContactMessage(payload) {
+  return [
+    "Hola Zenit, quiero enviar una consulta.",
+    "",
+    "Datos de contacto:",
+    `- Nombre: ${payload.name}`,
+    `- Numero de WhatsApp: ${payload.contact}`,
+    ...(payload.company ? [`- Empresa: ${payload.company}`] : []),
+    "",
+    "Resumen del proyecto:",
+    `- Tipo de proyecto: ${payload.project}`,
+    `- Prioridad: ${payload.priority || "Quiero explorar"}`,
+    ...(payload.message ? ["", "Mensaje del cliente:", payload.message] : [])
+  ].join("\n");
+}
+
+async function saveContactLead(payload) {
+  const response = await fetch(CONTACT_API_ENDPOINT, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(payload)
+  });
+
+  const result = await response.json().catch(() => ({}));
+
+  if (!response.ok || !result.ok) {
+    const message = Array.isArray(result.errors) ? result.errors.join(" ") : result.error;
+    throw new Error(message || "No se pudo registrar la consulta.");
+  }
+
+  return result;
+}
+
+function isValidPhoneNumber(value) {
+  return /^[0-9]{7,15}$/.test(String(value || ""));
 }
 
 function updateContactSummary() {
@@ -331,6 +383,12 @@ if (projectSelect && messageTextarea) {
   });
 }
 
+if (contactInput) {
+  contactInput.addEventListener("input", () => {
+    contactInput.value = contactInput.value.replace(/\D/g, "").slice(0, Number(contactInput.maxLength) || 15);
+  });
+}
+
 if (form) {
   form.addEventListener("input", updateContactSummary);
   form.addEventListener("change", updateContactSummary);
@@ -338,37 +396,44 @@ if (form) {
 }
 
 if (form) {
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const data = new FormData(form);
-    const name = String(data.get("name") || "").trim();
-    const company = String(data.get("company") || "").trim();
-    const project = String(data.get("project") || "").trim();
-    const priority = String(data.get("priority") || "").trim();
-    const message = String(data.get("message") || "").trim();
+    const payload = buildContactPayload(data);
+    const submitButton = form.querySelector('button[type="submit"]');
+    const fallbackWhatsAppUrl = makeWhatsAppUrl(buildContactMessage(payload));
 
-    if (!name || !project) {
-      status.textContent = "Completa tu nombre y el tipo de proyecto para preparar el mensaje.";
+    if (!payload.name || !payload.contact || !payload.project) {
+      status.textContent = "Completa tu nombre, numero de WhatsApp y tipo de proyecto para preparar el mensaje.";
       form.reportValidity();
       return;
     }
 
-    const lines = [
-      "Hola Zenit, quiero enviar una consulta.",
-      "",
-      "Datos de contacto:",
-      `- Nombre: ${name}`,
-      ...(company ? [`- Empresa: ${company}`] : []),
-      "",
-      "Resumen del proyecto:",
-      `- Tipo de proyecto: ${project}`,
-      `- Prioridad: ${priority}`,
-      ...(message ? ["", "Mensaje del cliente:", message] : [])
-    ];
+    if (!isValidPhoneNumber(payload.contact)) {
+      status.textContent = "Ingresa solo numeros en el campo de WhatsApp.";
+      contactInput?.focus();
+      form.reportValidity();
+      return;
+    }
 
-    status.textContent = "Abriendo WhatsApp con tu mensaje preparado.";
-    window.open(makeWhatsAppUrl(lines.join("\n")), "_blank", "noopener,noreferrer");
+    if (submitButton) {
+      submitButton.disabled = true;
+    }
+
+    try {
+      status.textContent = "Registrando tu consulta y preparando WhatsApp.";
+      const result = await saveContactLead(payload);
+      status.textContent = "Consulta registrada. Abriendo WhatsApp con tu mensaje preparado.";
+      window.open(result.whatsappUrl || fallbackWhatsAppUrl, "_blank", "noopener,noreferrer");
+    } catch (error) {
+      status.textContent = "No se pudo registrar en el backend. Abriendo WhatsApp de todas formas.";
+      window.open(fallbackWhatsAppUrl, "_blank", "noopener,noreferrer");
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+      }
+    }
   });
 }
 
@@ -390,39 +455,4 @@ if ("IntersectionObserver" in window) {
   revealItems.forEach((item) => observer.observe(item));
 } else {
   revealItems.forEach((item) => item.classList.add("is-visible"));
-}
-
-const metrics = document.querySelectorAll("[data-count]");
-
-if ("IntersectionObserver" in window && metrics.length) {
-  const metricObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) {
-          return;
-        }
-
-        const element = entry.target;
-        const target = Number(element.dataset.count || "0");
-        const duration = 850;
-        const start = performance.now();
-
-        function tick(now) {
-          const progress = Math.min((now - start) / duration, 1);
-          const eased = 1 - Math.pow(1 - progress, 3);
-          element.textContent = Math.round(target * eased).toString();
-
-          if (progress < 1) {
-            requestAnimationFrame(tick);
-          }
-        }
-
-        requestAnimationFrame(tick);
-        metricObserver.unobserve(element);
-      });
-    },
-    { threshold: 0.7 }
-  );
-
-  metrics.forEach((metric) => metricObserver.observe(metric));
 }
