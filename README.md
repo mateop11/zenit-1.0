@@ -45,3 +45,4 @@ No pongas tokens de Meta, WhatsApp o CRM dentro de `script.js`.
 - Mantener `connect-src 'none'` mientras no haya backend.
 - Si agregas analitica, mapas, chatbots o fuentes externas, actualiza la CSP con dominios especificos.
 - Usar un backend para cualquier integracion que requiera claves privadas.
+
